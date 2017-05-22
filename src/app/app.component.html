@@ -1,27 +1,33 @@
 <div id="main-div">
-<input type="text" #gf />
+    <input type="text" #gf />
 
-<!--<p-dataTable [value]="rows" [paginator]="true" [rows]="2">
-    <p-column field="id" header="Id" [style]="{ width: '100px'}"></p-column>
-    <p-column field="sval" [sortable]="true" header="String value" [style]="{ width: '300px'}">
-        <ng-template let-r="rowData" pTemplate="body">
-            {{r.sval | uppercase }}
-        </ng-template>
+    <select [(ngModel)]="option" placeholder="Tabelka">
+<option *ngFor="let o of options" [value]="o.code">
+{{o.txt}}
+</option>
+</select>
 
-    </p-column>
-    <p-column field="nval" header="Num value"></p-column>
-    <p-column field="aval" header="Arr value"></p-column>
-</p-dataTable>-->
+    <p-dataTable *ngIf="option === 'primeng'" [value]="rows" [paginator]="false" selectionMode="single" [rows]="10" [globalFilter]="gf">
+        <p-column field="id" header="Id" [style]="{ width: '100px'}"></p-column>
+        <p-column field="sval" [sortable]="true" header="String value" [style]="{ width: '300px'}">
+            <ng-template let-r="rowData" pTemplate="body">
+                {{r.sval | uppercase }}
+            </ng-template>
 
-<mw-table [data]="rows" paginator="true">
-    <mw-col field="id" header="Id" [style]="{ width: '100px'} "></mw-col>
-    <mw-col field="sval" header="String value" [sortable]="true" [style]="{ width:'300px' }">
-        <ng-template let-r="rowData" mwTemplate="body">
-            {{r.sval | uppercase }}
-        </ng-template>
-    </mw-col>
-    <mw-col field="nval" header="Num value" [sortable]="true"></mw-col>
-    <mw-col field="aval" header="Arr value" [sortable]="true">
-    </mw-col>
-</mw-table>
+        </p-column>
+        <p-column field="nval" header="Num value" [sortable]="true"></p-column>
+        <p-column field="aval" header="Arr value"></p-column>
+    </p-dataTable>
+
+    <mw-table *ngIf="option === 'my'" [data]="rows" paginator="false" [globalFilter]="gf">
+        <mw-col field="id" header="Id" [style]="{ width: '100px'} "></mw-col>
+        <mw-col field="sval" header="String value" [sortable]="true" [style]="{ width:'300px' }">
+            <ng-template let-r="rowData" mwTemplate="body">
+                {{r.sval | uppercase }}
+            </ng-template>
+        </mw-col>
+        <mw-col field="nval" header="Num value" [sortable]="true"></mw-col>
+        <mw-col field="aval" header="Arr value" [sortable]="true">
+        </mw-col>
+    </mw-table>
 </div>

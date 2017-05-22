@@ -14,6 +14,9 @@ export class ColumnBodyTemplateRenderer implements OnInit, OnDestroy {
     @Input()
     column: Column
 
+    @Input()
+    filterType: string
+
     // @Input() rowIndex: number;
 
     view: EmbeddedViewRef<any>;
@@ -72,6 +75,10 @@ export class Column implements OnInit, AfterContentInit {
 
     toggleSort() {
         this.sortOrder = (this.sortOrder === 'desc' ? 'asc' : 'desc')
+    }
+
+    unsort() {
+        this.sortOrder = null
     }
 
     constructor(public viewContainer: ViewContainerRef) { }

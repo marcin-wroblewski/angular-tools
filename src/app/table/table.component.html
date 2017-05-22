@@ -13,7 +13,8 @@
             </thead>
             <tbody class="ui-datatable-data ui-widget-content">
                 <tr *ngFor="let row of dataView(); let i = index;" 
-                    [ngClass]="{ 'ui-widget-content':true, 'ui-datatable-even':i % 2 === 0, 'ui-datatable-odd':i%2=== 1 }"
+                    [ngClass]="{ 'ui-widget-content':true, 'ui-datatable-even':i % 2 === 0, 'ui-datatable-odd':i%2=== 1, 'ui-state-highlight': row === selectedRow }"
+                    (click)="selectRow(row)"
                     mwRow [cols]="cols" [row]="row">
                 </tr>
             </tbody>
