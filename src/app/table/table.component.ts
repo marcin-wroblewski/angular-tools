@@ -13,12 +13,18 @@ export class TableComponent implements OnInit, AfterViewInit {
     cols: QueryList<Column>
 
     @Input()
+    emptyMessage = "No records found"
+
+    @Input()
     data: any[]
+
     filtered: any[]
 
-    selectedRow:any
+    selectedRow: any
 
     page: number = 0
+    @Input()
+    pageLinks: number = 5
 
     @Input()
     rowsPerPage: number = 1000
@@ -26,28 +32,52 @@ export class TableComponent implements OnInit, AfterViewInit {
     @Input()
     paginator: boolean = false
 
+
     filters: Filters = new Filters()
 
     @Input()
     globalFilter: any
 
+
     setPage(page: number) {
-        this.page = page
+        if (page >= 0 && page < this.pages().length) {
+            this.page = page
+        }
     }
 
     private currentData() {
         return this.filtered || this.data
     }
 
-    isSelected(row:any) {
+    isSelected(row: any) {
         return row === this.selectedRow
     }
 
     pages(): number[] {
-        return range(1 + Math.floor((this.currentData().length - 1) / this.rowsPerPage))
+        return range(1 + this.lastPage())
+    }
+
+    lastPage(): number {
+        return Math.floor((Math.max(0, this.currentData().length - 1)) / this.rowsPerPage)
+    }
+
+    shownPages(): number[] {
+        let pages = this.pages()
+        let pageLinks = Math.min(this.pageLinks, pages.length)
+
+        let start = Math.max(0, Math.ceil(this.page - (pageLinks / 2)))
+        let end = Math.min(pages.length, start + pageLinks);
+
+        var delta = pageLinks - (end - start);
+        start = Math.max(0, start - delta);
+
+        return pages.slice(start, end)
     }
 
     toggleSort(col: Column) {
+        if(!col.sortable) {
+            return
+        }
         this.cols.forEach(column => {
             if (column !== col) {
                 column.unsort()
@@ -57,7 +87,7 @@ export class TableComponent implements OnInit, AfterViewInit {
         this.doSort()
     }
 
-    selectRow(row:any) {
+    selectRow(row: any) {
         this.selectedRow = row
     }
 
@@ -69,6 +99,7 @@ export class TableComponent implements OnInit, AfterViewInit {
 
     doFilter() {
         this.filtered = this.data.filter(row => this.filters.match(row))
+        this.page = 0
     }
     doSort() {
         let sortColumn: Column = this.cols.find(col => col.sortOrder != null)
@@ -85,6 +116,11 @@ export class TableComponent implements OnInit, AfterViewInit {
                 })
             }
         }
+    }
+
+    rowsFound(): boolean {
+        let currentData = this.currentData()
+        return currentData && currentData.length > 0
     }
 
     compare(a, b) {
@@ -104,19 +140,9 @@ export class TableComponent implements OnInit, AfterViewInit {
         return data
     }
 
-    /*
-    filter -> sort -> paginate
-    */
-
     constructor(public renderer: Renderer) { }
 
     ngOnInit() {
-        // this.filter("a", "sval", "startsWith")
-        // this.filter("9", "nval", "startsWith")
-        // setTimeout(() => {
-        //     this.filter("", "sval", "startsWith")
-        //     this.filter("", "nval", "startsWith")
-        // }, 2000)
     }
 
     ngAfterViewInit(): void {
@@ -129,5 +155,4 @@ export class TableComponent implements OnInit, AfterViewInit {
             })
         }
     }
-
 }

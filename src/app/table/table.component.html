@@ -12,36 +12,38 @@
                 </tr>
             </thead>
             <tbody class="ui-datatable-data ui-widget-content">
+                <!--<tr *ngIf="!rowsFound()">
+                    <td [colSpan]="cols.length">{{emptyMessage}}</td>
+                </tr>-->
                 <tr *ngFor="let row of dataView(); let i = index;" 
-                    [ngClass]="{ 'ui-widget-content':true, 'ui-datatable-even':i % 2 === 0, 'ui-datatable-odd':i%2=== 1, 'ui-state-highlight': row === selectedRow }"
-                    (click)="selectRow(row)"
-                    mwRow [cols]="cols" [row]="row">
+                [ngClass]="{ 'ui-widget-content':true, 'ui-datatable-even':i % 2 === 0, 'ui-datatable-odd':i%2=== 1, 'ui-state-highlight': row === selectedRow }"
+                    (click)="selectRow(row)" mwRow [cols]="cols" [row]="row">
                 </tr>
             </tbody>
         </table>
         <div *ngIf="paginator" class="ui-paginator-bottom ui-paginator ui-widget ui-widget-header ui-unselectable-text">
-            <a *ngFor="let pg of pages()" class="ui-paginator-page ui-paginator-element ui-state-default ui-corner-all" (click)="setPage(pg)">{{pg+1}}</a>
-        </div>
-        <!--<div class="ui-paginator-bottom ui-paginator ui-widget ui-widget-header ui-unselectable-text">
-            <a class="ui-paginator-first ui-paginator-element ui-state-default ui-corner-all ui-state-disabled" href="#" ng-reflect-klass="ui-paginator-first ui-paginato"
-                ng-reflect-ng-class="[object Object]" tabindex="-1">
+            <a class="ui-paginator-first ui-paginator-element ui-state-default ui-corner-all" [ngClass]="{'ui-state-disabled': page === 0}"
+                (click)="setPage(0)">
                 <span class="fa fa-step-backward"></span>
             </a>
-            <a class="ui-paginator-prev ui-paginator-element ui-state-default ui-corner-all ui-state-disabled" href="#" ng-reflect-klass="ui-paginator-prev ui-paginator"
-                ng-reflect-ng-class="[object Object]" tabindex="-1">
+            <a class="ui-paginator-prev ui-paginator-element ui-state-default ui-corner-all" [ngClass]="{'ui-state-disabled': page === 0}"
+                (click)="setPage(page-1)">
                 <span class="fa fa-backward"></span>
             </a>
             <span class="ui-paginator-pages">
-<a class="ui-paginator-page ui-paginator-element ui-state-default ui-corner-all ui-state-active" href="#" ng-reflect-klass="ui-paginator-page ui-paginator" ng-reflect-ng-class="[object Object]">1</a><a class="ui-paginator-page ui-paginator-element ui-state-default ui-corner-all" href="#" ng-reflect-klass="ui-paginator-page ui-paginator" ng-reflect-ng-class="[object Object]">2</a><a class="ui-paginator-page ui-paginator-element ui-state-default ui-corner-all" href="#" ng-reflect-klass="ui-paginator-page ui-paginator" ng-reflect-ng-class="[object Object]">3</a><a class="ui-paginator-page ui-paginator-element ui-state-default ui-corner-all" href="#" ng-reflect-klass="ui-paginator-page ui-paginator" ng-reflect-ng-class="[object Object]">4</a><a class="ui-paginator-page ui-paginator-element ui-state-default ui-corner-all" href="#" ng-reflect-klass="ui-paginator-page ui-paginator" ng-reflect-ng-class="[object Object]">5</a>
+            <a *ngFor="let pg of shownPages()" 
+            [ngClass]="{'ui-state-active': pg === page}"
+            class="ui-paginator-page ui-paginator-element ui-state-default ui-corner-all" (click)="setPage(pg)">{{pg+1}}</a>
             </span>
-            <a class="ui-paginator-next ui-paginator-element ui-state-default ui-corner-all" href="#" ng-reflect-klass="ui-paginator-next ui-paginator"
-                ng-reflect-ng-class="[object Object]" tabindex="0">
+            <a class="ui-paginator-next ui-paginator-element ui-state-default ui-corner-all" [ngClass]="{'ui-state-disabled': page === lastPage()}"
+                (click)="setPage(page+1)">
                 <span class="fa fa-forward"></span>
             </a>
-            <a class="ui-paginator-last ui-paginator-element ui-state-default ui-corner-all" href="#" ng-reflect-klass="ui-paginator-last ui-paginator"
-                ng-reflect-ng-class="[object Object]" tabindex="0">
+            <a class="ui-paginator-last ui-paginator-element ui-state-default ui-corner-all" [ngClass]="{'ui-state-disabled': page === lastPage()}"
+                (click)="setPage(lastPage())">
+
                 <span class="fa fa-step-forward"></span>
             </a>
-        </div>-->
+        </div>
     </div>
 </div>

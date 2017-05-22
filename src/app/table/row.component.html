@@ -1,8 +1,8 @@
 <ng-container *ngFor="let col of cols">
-    <td *ngIf="!col.bodyTemplate; else bodyTempl">{{row[col.field]}}</td>
-    <template #bodyTempl>
-        <td>
+    <td *ngIf="!col.bodyTemplate; else bodyTempl" [ngStyle]="col.style" >{{row[col.field]}}</td>
+    <ng-template #bodyTempl>
+        <td [ngStyle]="col.style">
             <mw-colBodyTemplateRenderer [rowData]="row" [column]="col"></mw-colBodyTemplateRenderer>
         </td>
-    </template>
+    </ng-template>
 </ng-container>
