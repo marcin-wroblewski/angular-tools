@@ -1,6 +1,6 @@
 <div class="ui-datatable ui-widget">
     <div class="ui-datatable-tablewrapper">
-        <table>
+        <table [ngClass]="{ 'scrollable': isScrollable() }">
             <thead class="ui-datatable-thead">
                 <tr class="ui-state-default">
                     <th *ngFor="let col of cols" [ngStyle]="col.style" class="ui-state-default ui-unselectable-text" [ngClass]="{ 'ui-sortable-column': col.sortable}"
@@ -11,12 +11,12 @@
                     </th>
                 </tr>
             </thead>
-            <tbody class="ui-datatable-data ui-widget-content">
-                <!--<tr *ngIf="!rowsFound()">
+            <tbody class="ui-datatable-data ui-widget-content" [ngStyle]="{'max-height': isScrollable() ?scrollHeight:''}">
+                <tr *ngIf="!dataView || dataView.length === 0">
                     <td [colSpan]="cols.length">{{emptyMessage}}</td>
-                </tr>-->
-                <tr *ngFor="let row of dataView(); let i = index;" 
-                [ngClass]="{ 'ui-widget-content':true, 'ui-datatable-even':i % 2 === 0, 'ui-datatable-odd':i%2=== 1, 'ui-state-highlight': row === selectedRow }"
+                </tr>
+                <tr *ngFor="let row of dataView; let i = index;" 
+                    [ngClass]="{ 'ui-widget-content':true, 'ui-datatable-even':i % 2 === 0, 'ui-datatable-odd':i%2=== 1, 'ui-state-highlight': row === selection }"
                     (click)="selectRow(row)" mwRow [cols]="cols" [row]="row">
                 </tr>
             </tbody>
@@ -41,9 +41,14 @@
             </a>
             <a class="ui-paginator-last ui-paginator-element ui-state-default ui-corner-all" [ngClass]="{'ui-state-disabled': page === lastPage()}"
                 (click)="setPage(lastPage())">
-
                 <span class="fa fa-step-forward"></span>
-            </a>
+            </a> {{cols.length}}
+
+            <select *ngIf="rowsPerPageOptions" [(ngModel)]="rowsPerPage" class="ui-paginator-rpp-options ui-widget ui-state-default"
+                (ngModelChange)="rowsPerPageChanged()">
+                <option *ngFor="let o of rowsPerPageOptions" [value]="o">{{o}}</option>
+                <option [value]="ALL_ROWS">Wszystkie ({{currentRowCount}})</option>
+            </select>
         </div>
     </div>
 </div>

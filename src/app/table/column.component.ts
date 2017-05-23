@@ -91,11 +91,6 @@ export class Column implements OnInit, AfterContentInit {
     }
 
     ngOnInit(): void {
-        // console.log("template = ", this.template)
-        // console.log("vc = ", this.viewContainer)
-        console.log("templates = ", this.templates)
-        // if (this.template)
-        // this.viewContainer.createEmbeddedView(this.template)
     }
 
 }

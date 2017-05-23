@@ -6,8 +6,17 @@
 {{o.txt}}
 </option>
 </select>
+    <button type="button" (click)="reload()">Reload</button>
+    <button type="button" (click)="clean()">Clean</button>
+    <button type="button" (click)="add()">Add</button>
 
-    <p-dataTable *ngIf="option === 'primeng'" [value]="rows" [paginator]="false" [pageLinks]="5" selectionMode="single" [rows]="10" [globalFilter]="gf">
+
+    <div class="selected">
+        <ng-container *ngIf="selected">{{selected.id}} {{selected.sval}}</ng-container>
+    </div>
+
+    <p-dataTable *ngIf="option === 'primeng'" [value]="rows" [paginator]="true" [pageLinks]="5" selectionMode="single" [rows]="10"
+        [rowsPerPageOptions]="[10,20,30]" [globalFilter]="gf">
         <p-column field="id" header="Id" [style]="{ width: '100px'}"></p-column>
         <p-column field="sval" [sortable]="true" header="String value" [style]="{ width: '300px'}">
             <ng-template let-r="rowData" pTemplate="body">
@@ -18,8 +27,10 @@
         <p-column field="aval" header="Arr value"></p-column>
     </p-dataTable>
 
-    <mw-table *ngIf="option === 'my'" [data]="rows" [paginator]="false" [pageLinks]="4" [rowsPerPage]="10" [globalFilter]="gf"
-    emptyMessage="Brak rekordów">
+    <mw-table *ngIf="option === 'my'" [data]="rows" [paginator]="true" [scrollable]="false" scrollHeight="400px" [pageLinks]="5"
+        [scrollableRowsPerPageThreshold]="10"
+        [rowsPerPageOptions]="[10,20,30,500]" (afterDataChange)="afterTableChanged($event)" [rowsPerPage]="10" [globalFilter]="gf"
+        [(selection)]="selected" emptyMessage="Brak rekordów" #myTable>
         <mw-col field="id" header="Id" [style]="{ width: '100px'} "></mw-col>
         <mw-col field="sval" header="String value" [sortable]="true" [style]="{ width:'300px' }">
             <ng-template let-r="rowData" mwTemplate="body">

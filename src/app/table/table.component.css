@@ -1,28 +1,17 @@
-/*thead, tbody { display: block; }
-
-
-tbody {
-    height: 300px;
-    overflow-y: auto;
-    scroll-snap-coordinate: 14px;
-    overflow-x: hidden;
-    padding-right: -15px;
-}*/
-
-/*table ,tr td{
+/*table,tr td{
     border:0px;
-}
-tbody {
+}*/
+table.scrollable tbody {
     display:block;
-    height:300px;
     overflow-y:auto;
     overflow-x: hidden;
 }
-thead, tbody tr {
+table.scrollable thead, 
+table.scrollable tbody tr {
     display:table;
     width:100%;
     table-layout:fixed;
 }
-thead {
+table.scrollable thead {
     width: calc( 100% - 1em )
-}*/
+}

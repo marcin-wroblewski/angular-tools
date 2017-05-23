@@ -71,6 +71,10 @@ export const filterConditions: FilterConditions = {
         }
 
         return false;
+    },
+
+    containsAny(values: string[], filter: string[]): boolean {
+        return !filter || values.some(value => filter.indexOf(value) >= 0)
     }
 }
 
@@ -96,7 +100,7 @@ export class Filters {
     }
 
 
-    match(row: any): boolean {
+    private match(row: any): boolean {
         let fields = Object.keys(row)
 
         let columnFiltersMatch = fields.every(field => {
@@ -113,7 +117,10 @@ export class Filters {
         })
 
         return columnFiltersMatch && (!this.globalFilter || fields.find(field => filterConditions.contains(row[field], this.globalFilter)) !== undefined)
+    }
 
+    filter(data: any[]): any[] {
+        return data.filter(row => this.match(row))
     }
 
 }

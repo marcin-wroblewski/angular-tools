@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, Renderer, QueryList, ContentChildren } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, OnInit, OnChanges, Renderer, QueryList, SimpleChanges, SimpleChange, ContentChildren } from '@angular/core';
 import { Column } from './column.component'
 import { Filters } from './filters'
 import { range } from '../shared/data'
@@ -8,7 +8,9 @@ import { range } from '../shared/data'
     templateUrl: './table.component.html',
     styleUrls: ['./table.component.css']
 })
-export class TableComponent implements OnInit, AfterViewInit {
+export class TableComponent implements OnInit, OnChanges, AfterViewInit {
+    ALL_ROWS: number = -1
+
     @ContentChildren(Column)
     cols: QueryList<Column>
 
@@ -16,32 +18,55 @@ export class TableComponent implements OnInit, AfterViewInit {
     emptyMessage = "No records found"
 
     @Input()
+    scrollable: boolean = false
+
+    @Input()
+    scrollHeight: string
+
+    @Input()
     data: any[]
+
+    @Output()
+    afterDataChange: EventEmitter<any> = new EventEmitter()
+
+    @Input()
+    rowsPerPageOptions: number[]
+
+    @Input()
+    rowsPerPage: number = 10
+
+    @Input()
+    scrollableRowsPerPageThreshold = 30
+
+    dataView: any[]
 
     filtered: any[]
 
-    selectedRow: any
+    @Input()
+    selection: any
+
+    @Output()
+    selectionChange: EventEmitter<any> = new EventEmitter()
 
     page: number = 0
     @Input()
     pageLinks: number = 5
 
-    @Input()
-    rowsPerPage: number = 1000
 
     @Input()
     paginator: boolean = false
 
-
     filters: Filters = new Filters()
+
+    currentRowCount: number = 0
 
     @Input()
     globalFilter: any
 
-
     setPage(page: number) {
         if (page >= 0 && page < this.pages().length) {
             this.page = page
+            this.dataViewChange()
         }
     }
 
@@ -50,15 +75,17 @@ export class TableComponent implements OnInit, AfterViewInit {
     }
 
     isSelected(row: any) {
-        return row === this.selectedRow
+        return row === this.selection
     }
 
     pages(): number[] {
-        return range(1 + this.lastPage())
+        let lastPage = this.lastPage()
+        return range(1 + lastPage)
     }
 
+
     lastPage(): number {
-        return Math.floor((Math.max(0, this.currentData().length - 1)) / this.rowsPerPage)
+        return this.rowsPerPage == this.ALL_ROWS ? 0 : Math.floor((Math.max(0, this.currentData().length - 1)) / this.rowsPerPage)
     }
 
     shownPages(): number[] {
@@ -75,7 +102,7 @@ export class TableComponent implements OnInit, AfterViewInit {
     }
 
     toggleSort(col: Column) {
-        if(!col.sortable) {
+        if (!col.sortable) {
             return
         }
         this.cols.forEach(column => {
@@ -88,32 +115,64 @@ export class TableComponent implements OnInit, AfterViewInit {
     }
 
     selectRow(row: any) {
-        this.selectedRow = row
+        this.selection = row
+        this.selectionChange.emit(this.selection)
     }
 
     filter(value, field, condition) {
         this.filters.setFilter(value, field, condition)
         this.doFilter()
-        this.doSort()
     }
 
     doFilter() {
-        this.filtered = this.data.filter(row => this.filters.match(row))
-        this.page = 0
+        this.filtered = this.filters.filter(this.data)
+        // this.page = 0
+        this.doSort()
     }
+
+    dataViewChange() {
+        this.dataView = null
+        this.setDataView()
+        this.unselectIfNeeded()
+    }
+
+    findAndSelect(row: any, key: string = null) {
+        let array = this.currentData()
+        let index = key ? array.findIndex(value => value[key] === row[key]) : array.findIndex((value) => value === row)
+
+        if (index >= 0) {
+            this.changeSelection(row)
+            if (this.rowsPerPage != this.ALL_ROWS) {
+                let page = Math.floor(index / this.rowsPerPage)
+                this.setPage(page)
+            }
+        }
+    }
+
+    changeSelection(row: any) {
+        this.selection = row
+        setTimeout(() => {
+            this.selectionChange.emit(row)
+        });
+    }
+
     doSort() {
         let sortColumn: Column = this.cols.find(col => col.sortOrder != null)
         if (sortColumn) {
             const factor = sortColumn.sortOrder === 'asc' ? 1 : -1
+            let data = this.filtered ? this.filtered : this.data
+            data.sort((a, b) => {
+                return factor * this.compare(a[sortColumn.field], b[sortColumn.field])
+            })
+        }
+        this.dataViewChange()
+    }
 
-            if (this.filtered) {
-                this.filtered.sort((a, b) => {
-                    return factor * this.compare(a[sortColumn.field], b[sortColumn.field])
-                })
-            } else {
-                this.data.sort((a, b) => {
-                    return factor * this.compare(a[sortColumn.field], b[sortColumn.field])
-                })
+    unselectIfNeeded() {
+        if (this.selection) {
+            let currentView = this.dataView
+            if (!currentView.find(row => row === this.selection)) {
+                this.changeSelection(null)
             }
         }
     }
@@ -131,13 +190,22 @@ export class TableComponent implements OnInit, AfterViewInit {
         return 0
     }
 
-    dataView(): any[] {
-        let data = this.currentData()
-        if (this.paginator) {
-            let start = this.page * this.rowsPerPage
-            return data.slice(start, start + this.rowsPerPage)
+    isScrollable() {
+        return this.scrollable || (this.rowsPerPage > this.scrollableRowsPerPageThreshold)
+    }
+
+    setDataView() {
+        if (!this.dataView) {
+            let data = this.currentData()
+            this.currentRowCount = data.length
+            if (this.paginator && this.rowsPerPage != this.ALL_ROWS) {
+                let start = this.page * this.rowsPerPage
+                let end = (this.page + 1) * this.rowsPerPage
+                this.dataView = data.slice(start, end)
+            } else {
+                this.dataView = data
+            }
         }
-        return data
     }
 
     constructor(public renderer: Renderer) { }
@@ -153,6 +221,18 @@ export class TableComponent implements OnInit, AfterViewInit {
                     this.doFilter()
                 }, 300)
             })
+        }
+    }
+
+    rowsPerPageChanged() {
+        this.dataViewChange()
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.data) {
+            this.page = 0
+            this.dataViewChange()
+            this.afterDataChange.emit("dataChange")
         }
     }
 }
