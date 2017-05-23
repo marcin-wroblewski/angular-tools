@@ -16,6 +16,7 @@
                     <td [colSpan]="cols.length">{{emptyMessage}}</td>
                 </tr>
                 <tr *ngFor="let row of dataView; let i = index;" 
+                    [class]="getRowStyleClass(row, i)"
                     [ngClass]="{ 'ui-widget-content':true, 'ui-datatable-even':i % 2 === 0, 'ui-datatable-odd':i%2=== 1, 'ui-state-highlight': row === selection }"
                     (click)="selectRow(row)" mwRow [cols]="cols" [row]="row">
                 </tr>

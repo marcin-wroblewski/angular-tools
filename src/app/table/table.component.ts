@@ -38,6 +38,9 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     @Input()
     scrollableRowsPerPageThreshold = 30
 
+    @Input()
+    rowStyleClass: Function
+
     dataView: any[]
 
     filtered: any[]
@@ -62,6 +65,11 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
     @Input()
     globalFilter: any
+
+    getRowStyleClass(row, index) {
+        let styleClass = this.rowStyleClass ? this.rowStyleClass(row, index) : ''
+        return styleClass
+    }
 
     setPage(page: number) {
         if (page >= 0 && page < this.pages().length) {

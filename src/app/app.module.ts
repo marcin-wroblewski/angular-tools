@@ -8,19 +8,20 @@ import { AppComponent } from './app.component';
 import { TableComponent } from './table/table.component';
 import { RowComponent } from './table/row.component'
 import { Column, ColumnBodyTemplateRenderer, MWTemplate  } from './table/column.component';
+// import { MwTableModule } from './table/mw-table.module'
 
 @NgModule({
   declarations: [
     AppComponent,
-    TableComponent,
-    RowComponent,
+    TableComponent, RowComponent,
     Column, ColumnBodyTemplateRenderer, MWTemplate
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    DataTableModule
+    DataTableModule,
+    // MwTableModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

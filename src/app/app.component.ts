@@ -50,6 +50,15 @@ export class AppComponent implements OnInit {
 
     rows: any[] = this.generate(1000)
 
+    rowStyleClass(row:any, index: number) {
+        console.log("rrr")
+        if(row.nval > 50) {
+            return "big"
+        } else {
+            return "small"
+        }
+    }
+
     ngOnInit(): void {
     }
 

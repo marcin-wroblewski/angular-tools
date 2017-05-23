@@ -29,6 +29,7 @@
 
     <mw-table *ngIf="option === 'my'" [data]="rows" [paginator]="true" [scrollable]="false" scrollHeight="400px" [pageLinks]="5"
         [scrollableRowsPerPageThreshold]="10"
+        [rowStyleClass]="rowStyleClass"
         [rowsPerPageOptions]="[10,20,30,500]" (afterDataChange)="afterTableChanged($event)" [rowsPerPage]="10" [globalFilter]="gf"
         [(selection)]="selected" emptyMessage="Brak rekordów" #myTable>
         <mw-col field="id" header="Id" [style]="{ width: '100px'} "></mw-col>
