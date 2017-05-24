@@ -149,7 +149,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
         let index = key ? array.findIndex(value => value[key] === row[key]) : array.findIndex((value) => value === row)
 
         if (index >= 0) {
-            this.changeSelection(row)
+            this.changeSelection(array[index])
             if (this.rowsPerPage != this.ALL_ROWS) {
                 let page = Math.floor(index / this.rowsPerPage)
                 this.setPage(page)
@@ -199,7 +199,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     isScrollable() {
-        return this.scrollable || (this.rowsPerPage > this.scrollableRowsPerPageThreshold)
+        return this.scrollable || (this.rowsPerPage > this.scrollableRowsPerPageThreshold) || (this.rowsPerPage == this.ALL_ROWS)
     }
 
     setDataView() {
